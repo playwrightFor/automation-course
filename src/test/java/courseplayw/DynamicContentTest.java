@@ -15,7 +15,7 @@ import java.nio.file.Paths;
  * @author Oleg Todor
  * @since 2025-03-18
  */
-public class DynamicContentTest {
+public class  DynamicContentTest {
 
     Playwright playwright;
     Browser browser;
