@@ -1,4 +1,4 @@
-package courseplayw.networkrequests;
+package networkrequests;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;

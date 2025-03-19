@@ -1,4 +1,4 @@
-package courseplayw.dynamic;
+package dynamic;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;

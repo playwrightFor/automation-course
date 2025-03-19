@@ -1,5 +1,4 @@
-package courseplayw.networkrequests;
-
+package networkrequests;
 
 import com.microsoft.playwright.*;
 import org.junit.jupiter.api.AfterEach;
@@ -10,7 +9,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StatusCodeInterceptionTest {
+public class NetworkInterceptionTest {
     Playwright playwright;
     Browser browser;
     BrowserContext context;
@@ -23,27 +22,33 @@ public class StatusCodeInterceptionTest {
         context = browser.newContext();
         page = context.newPage();
 
-        // Перехват запроса к /status_codes/404
-        context.route("**/status_codes/404", route -> {
+        // Перехват запроса и подмена ответа
+        context.route("**/dynamic_loading/2", route -> {
             route.fulfill(new Route.FulfillOptions()
                     .setStatus(200)
                     .setHeaders(Collections.singletonMap("Content-Type", "text/html"))
-                    .setBody("<h3>Mocked Success Response</h3>")
+                    .setBody("""
+                                <div id="start">
+                                    <button>Start</button>
+                                </div>
+                                <div id="finish" style="display: block;">
+                                    <h4>Mocked Title</h4>
+                                </div>
+                            """)
             );
         });
     }
 
+
     @Test
-    void testMockedStatusCode() {
-        page.navigate("https://the-internet.herokuapp.com/status_codes");
+    void testMockedContent() {
+        page.navigate("https://the-internet.herokuapp.com/dynamic_loading/2");
+        page.click("button:has-text('Start')");
 
-        // Клик по ссылке "404"
-        page.click("a[href='status_codes/404']");
-
-        // Проверка мок-текста
-        Locator responseText = page.locator("h3");
-        assertEquals("Mocked Success Response", responseText.textContent());
+        Locator title = page.locator("#finish h4");
+        assertEquals("Mocked Title", title.textContent());
     }
+
 
     @AfterEach
     void tearDown() {

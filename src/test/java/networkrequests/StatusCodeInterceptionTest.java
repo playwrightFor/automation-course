@@ -1,4 +1,5 @@
-package courseplayw.networkrequests;
+package networkrequests;
+
 
 import com.microsoft.playwright.*;
 import org.junit.jupiter.api.AfterEach;
@@ -9,7 +10,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NetworkInterceptionTest {
+public class StatusCodeInterceptionTest {
     Playwright playwright;
     Browser browser;
     BrowserContext context;
@@ -22,33 +23,27 @@ public class NetworkInterceptionTest {
         context = browser.newContext();
         page = context.newPage();
 
-        // Перехват запроса и подмена ответа
-        context.route("**/dynamic_loading/2", route -> {
+        // Перехват запроса к /status_codes/404
+        context.route("**/status_codes/404", route -> {
             route.fulfill(new Route.FulfillOptions()
                     .setStatus(200)
                     .setHeaders(Collections.singletonMap("Content-Type", "text/html"))
-                    .setBody("""
-                                <div id="start">
-                                    <button>Start</button>
-                                </div>
-                                <div id="finish" style="display: block;">
-                                    <h4>Mocked Title</h4>
-                                </div>
-                            """)
+                    .setBody("<h3>Mocked Success Response</h3>")
             );
         });
     }
 
-
     @Test
-    void testMockedContent() {
-        page.navigate("https://the-internet.herokuapp.com/dynamic_loading/2");
-        page.click("button:has-text('Start')");
+    void testMockedStatusCode() {
+        page.navigate("https://the-internet.herokuapp.com/status_codes");
 
-        Locator title = page.locator("#finish h4");
-        assertEquals("Mocked Title", title.textContent());
+        // Клик по ссылке "404"
+        page.click("a[href='status_codes/404']");
+
+        // Проверка мок-текста
+        Locator responseText = page.locator("h3");
+        assertEquals("Mocked Success Response", responseText.textContent());
     }
-
 
     @AfterEach
     void tearDown() {

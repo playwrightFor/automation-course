@@ -1,4 +1,4 @@
-package courseplayw.setup;
+package setup;
 
 import base.BaseTest;
 import org.junit.jupiter.api.Assertions;

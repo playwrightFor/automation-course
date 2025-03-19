@@ -1,4 +1,4 @@
-package courseplayw.networkrequests;
+package networkrequests;
 
 import com.microsoft.playwright.*;
 import org.junit.jupiter.api.AfterEach;
