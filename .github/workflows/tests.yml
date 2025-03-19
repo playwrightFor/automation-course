@@ -23,4 +23,5 @@ jobs:
           fi
 
       - name: Run tests
-        run: mvn test -Dtest=ExampleTest
+        run: mvn test
+#        run: mvn test -Dtest=ExampleTest
