@@ -1,4 +1,4 @@
-package courseplayw;
+package courseplayw.dynamic;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;
@@ -15,7 +15,7 @@ import java.nio.file.Paths;
  * @author Oleg Todor
  * @since 2025-03-18
  */
-public class  DynamicContentTest {
+public class DynamicContentTest {
 
     Playwright playwright;
     Browser browser;
@@ -31,10 +31,6 @@ public class  DynamicContentTest {
         page = context.newPage();
     }
 
-    @AfterEach
-    void tearDown() {
-        playwright.close();
-    }
 
     @Test
     void testDynamicLoading() {
@@ -80,5 +76,10 @@ public class  DynamicContentTest {
                     .setPath(Paths.get("dynamic-loading-error.png")));
             throw e;
         }
+    }
+
+    @AfterEach
+    void tearDown() {
+        playwright.close();
     }
 }

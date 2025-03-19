@@ -1,4 +1,4 @@
-package courseplayw;
+package courseplayw.dynamic;
 
 import com.microsoft.playwright.*;
 import org.junit.jupiter.api.AfterEach;
@@ -27,10 +27,6 @@ public class DynamicContentHomeTest {
         page = context.newPage();
     }
 
-    @AfterEach
-    void tearDown() {
-        playwright.close();
-    }
 
     @Test
     void testFormSubmission() {
@@ -66,5 +62,10 @@ public class DynamicContentHomeTest {
 
         // Закрытие новой вкладки
         newPage.close();
+    }
+
+    @AfterEach
+    void tearDown() {
+        playwright.close();
     }
 }
