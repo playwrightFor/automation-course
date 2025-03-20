@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+@Execution(ExecutionMode.CONCURRENT)
 public class AddRemoveElementsTest {
     private static BrowserContext context;
     private static Page page;
@@ -31,7 +32,7 @@ public class AddRemoveElementsTest {
         page = context.newPage();
     }
 
-    @Execution(ExecutionMode.CONCURRENT)
+
     @Test
     void testAddRemoveElements() {
         // Переход на страницу добавления/удаления элементов

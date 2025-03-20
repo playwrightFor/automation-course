@@ -9,7 +9,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
+@Execution(ExecutionMode.CONCURRENT)
 public class StatusCodeInterceptionTest {
     static Playwright playwright;
     static Browser browser;
@@ -33,7 +33,7 @@ public class StatusCodeInterceptionTest {
         });
     }
 
-    @Execution(ExecutionMode.CONCURRENT)
+
     @Test
     void testMockedStatusCode() {
         page.navigate("https://the-internet.herokuapp.com/status_codes");
