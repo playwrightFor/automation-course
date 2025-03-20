@@ -3,6 +3,7 @@ package screenshotandvideo;
 import com.microsoft.playwright.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -17,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.CONCURRENT)
 public class AddRemoveElementsTest {
-    private static BrowserContext context;
     private static Page page;
     private static Playwright playwright;
     private static Browser browser;
@@ -28,8 +28,9 @@ public class AddRemoveElementsTest {
         browser = playwright.chromium().launch(
                 new BrowserType.LaunchOptions().setHeadless(false)
         );
-        context = browser.newContext();
+        BrowserContext context = browser.newContext();
         page = context.newPage();
+        System.out.println("Before All Tests");
     }
 
 
@@ -57,14 +58,25 @@ public class AddRemoveElementsTest {
     }
 
     private Path getTimestampPath(String filename) {
-        return Paths.get(
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd"))
-                        + "_" + filename);
+        // Путь к папке screenshots для сохранения в указанное место
+        Path screenshotsDir = Paths.get("screenshots");
+
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss"));
+        return screenshotsDir.resolve(timestamp + "_" + filename);
+    }
+
+    @Test
+    void testOne() {
+        System.out.println("Running Test One");
+    }
+
+    @Test
+    void testTwo() {
+        System.out.println("Running Test Two");
     }
 
     @AfterAll
     static void teardown() {
-        context.close();
         browser.close();
         playwright.close();
     }
