@@ -3,6 +3,8 @@ package setup;
 import base.BaseTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 
 /**
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
  */
 public class PlaywrightSetupTest extends BaseTest {
 
+    @Execution(ExecutionMode.CONCURRENT)
     @Test
     void testPlaywrightSetup() {
         page.navigate("https://example.com");

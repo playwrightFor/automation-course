@@ -1,23 +1,23 @@
 package networkrequests;
 
-
 import com.microsoft.playwright.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StatusCodeInterceptionTest {
-    Playwright playwright;
-    Browser browser;
-    BrowserContext context;
-    Page page;
 
-    @BeforeEach
-    void setUp() {
+public class StatusCodeInterceptionTest {
+    static Playwright playwright;
+    static Browser browser;
+    static BrowserContext context;
+    static Page page;
+
+    @BeforeAll
+    static void setUp() {
         playwright = Playwright.create();
         browser = playwright.chromium().launch();
         context = browser.newContext();
@@ -33,6 +33,7 @@ public class StatusCodeInterceptionTest {
         });
     }
 
+    @Execution(ExecutionMode.CONCURRENT)
     @Test
     void testMockedStatusCode() {
         page.navigate("https://the-internet.herokuapp.com/status_codes");
@@ -45,8 +46,8 @@ public class StatusCodeInterceptionTest {
         assertEquals("Mocked Success Response", responseText.textContent());
     }
 
-    @AfterEach
-    void tearDown() {
+    @AfterAll
+    static void tearDown() {
         browser.close();
         playwright.close();
     }
