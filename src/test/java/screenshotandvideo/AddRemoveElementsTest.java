@@ -16,6 +16,11 @@ import java.time.format.DateTimeFormatter;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+/**
+ * @author Oleg Todor
+ * @since 2025-03-21
+ */
+
 @Execution(ExecutionMode.CONCURRENT)
 public class AddRemoveElementsTest {
     private static Page page;

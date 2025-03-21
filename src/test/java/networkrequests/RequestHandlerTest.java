@@ -10,6 +10,11 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
+/**
+ * @author Oleg Todor
+ * @since 2025-03-21
+ */
 @Execution(ExecutionMode.CONCURRENT)
 public class RequestHandlerTest {
     static Playwright playwright;

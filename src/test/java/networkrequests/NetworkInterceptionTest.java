@@ -9,6 +9,11 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+/**
+ * @author Oleg Todor
+ * @since 2025-03-18
+ */
 public class NetworkInterceptionTest {
     Playwright playwright;
     Browser browser;

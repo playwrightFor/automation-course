@@ -1,12 +1,12 @@
-package yasearche;
-
-import base.BaseTest;
-import com.microsoft.playwright.Page;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.nio.file.Paths;
-
+//package yasearche;
+//
+//import base.BaseTest;
+//import com.microsoft.playwright.Page;
+//import org.junit.jupiter.api.Assertions;
+//import org.junit.jupiter.api.Test;
+//
+//import java.nio.file.Paths;
+//
 //public class YandexSearchTest extends BaseTest {
 //
 //    @Test

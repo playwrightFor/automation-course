@@ -9,6 +9,11 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
+/**
+ * @author Oleg Todor
+ * @since 2025-03-21
+ */
 @Execution(ExecutionMode.CONCURRENT)
 public class ParallelNavigationTest {
     private static final String BASE_URL = "https://the-internet.herokuapp.com";

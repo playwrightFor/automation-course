@@ -12,6 +12,11 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+/**
+ * @author Oleg Todor
+ * @since 2025-03-21
+ */
 public class StatusCodeInterceptionTest {
     Playwright playwright;
     Browser browser;
