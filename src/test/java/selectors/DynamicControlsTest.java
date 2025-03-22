@@ -9,6 +9,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
+/**
+ * @author Oleg Todor
+ * @since 2025-03-22
+ */
 public class DynamicControlsTest {
     Playwright playwright;
     Browser browser;
