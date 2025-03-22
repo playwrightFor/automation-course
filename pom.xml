@@ -17,12 +17,18 @@
         <aspectjweaver.version>1.9.22</aspectjweaver.version>
         <playwright.version>1.50.0</playwright.version>
         <jackson-databind.version>2.17.0</jackson-databind.version>
+        <s3.version>2.31.5</s3.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>${s3.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>

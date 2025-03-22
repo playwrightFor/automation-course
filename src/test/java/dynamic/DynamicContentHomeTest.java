@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * @author Oleg Todor
- * @since 2025-03-18
+ * @since 2025-03-19
  */
 public class DynamicContentHomeTest {
 

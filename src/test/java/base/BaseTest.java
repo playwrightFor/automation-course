@@ -4,6 +4,10 @@ import com.microsoft.playwright.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+/**
+ * @author Oleg Todor
+ * @since 2025-03-16
+ */
 public class BaseTest {
     Playwright playwright;
     Browser browser;

@@ -6,6 +6,10 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @author Oleg Todor
+ * @since 2025-03-22
+ */
 public class MobileDynamicControlsTest {
     Playwright playwright;
     Browser browser;

@@ -9,6 +9,10 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * @author Oleg Todor
+ * @since 2025-03-22
+ */
 public class DynamicLoadingApiTest {
     Playwright playwright;
     Browser browser;

@@ -1,10 +1,15 @@
 package reports.tracing;
 
+
 import com.microsoft.playwright.*;
 import org.junit.jupiter.api.*;
 import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @author Oleg Todor
+ * @since 2025-03-21
+ */
 public class DynamicLoadingTraceTest {
     Playwright playwright;
     Browser browser;
