@@ -73,7 +73,7 @@ public class DynamicContentTest {
         } catch (Exception e) {
             // 9. Скриншот при ошибке
             page.screenshot(new Page.ScreenshotOptions()
-                    .setPath(Paths.get("dynamic-loading-error.png")));
+                    .setPath(Paths.get("screenshots/dynamic-loading-error.png")));
             throw e;
         }
     }
