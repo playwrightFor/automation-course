@@ -4,6 +4,11 @@ package pom.components;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+
+/**
+ * @author Oleg Todor
+ * @since 2025-03-23
+ */
 public class DragDropArea {
     private final Page page;
     private Locator elementA;

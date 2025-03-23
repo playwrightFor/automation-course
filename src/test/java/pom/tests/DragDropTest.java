@@ -4,8 +4,13 @@ import com.microsoft.playwright.*;
 import org.junit.jupiter.api.*;
 import pom.pages.DragDropPage;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+/**
+ * @author Oleg Todor
+ * @since 2025-03-23
+ */
 public class DragDropTest {
     static Playwright playwright;
     static Browser browser;
