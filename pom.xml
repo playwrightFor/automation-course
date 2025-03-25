@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <owner.version>1.0.12</owner.version>
         <javafaker.version>1.0.2</javafaker.version>
         <junit.jupiter.version>5.11.4</junit.jupiter.version>
         <junit.platform.version>1.10.0</junit.platform.version>
@@ -25,6 +26,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.aeonbits.owner</groupId>
+            <artifactId>owner</artifactId>
+            <version>${owner.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+
 /**
  * Тестовый класс с DI
  *
@@ -38,7 +39,6 @@ public class DynamicControlsTest {
 
     @AfterEach
     void teardown() {
-        // 6. Очистка ресурсов
         context.close();
     }
 }

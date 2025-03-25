@@ -4,6 +4,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitForSelectorState;
 
+
 // 2. Page Object с логикой работы с элементами
 public class DynamicControlsPage {
     private final Page page;
@@ -22,7 +23,7 @@ public class DynamicControlsPage {
 
     public void clickRemoveButton() {
         removeButton.click();
-        page.waitForTimeout(5000); // Явное ожидание для демонстрации
+        page.waitForTimeout(5000);
     }
 
     public boolean isCheckboxVisible() {
