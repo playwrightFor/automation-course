@@ -35,20 +35,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Шаг кеширования ДО сборки Docker-образа
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-
       - name: Build Docker image
         run: docker build -t playwright-junit-test .
 
       - name: Run tests with debug
         run: |
           docker run --rm \
-            -e BASE_URL=https://the-internet.herokuapp.com \
-            -v ${PWD}/test.txt:/app/test.txt \
-            playwright-junit-test \
-            mvn test -Dtest=FileUploadTest -e -X
+              --shm-size=2g \
+              -e BASE_URL=https://the-internet.herokuapp.com \
+              -v ${PWD}/test.txt:/app/test.txt \
+              playwright-junit-test \
+              mvn test -Dtest=FileUploadTest -e -X
+
+      - name: Print test reports
+        if: ${{ failure() }}  # Только при ошибке
+        run: |
+          docker run --rm \
+              -v ${PWD}/test-reports:/app/target/surefire-reports \
+              playwright-junit-test \
+              cat /app/target/surefire-reports/*.txt
