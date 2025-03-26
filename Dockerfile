@@ -1,22 +1,14 @@
-#FROM mcr.microsoft.com/playwright/java:v1.50.0-jammy
-#
-#WORKDIR /app
-#COPY . .
-#RUN apt-get update && apt-get install -y maven && mvn clean install
-
-# Используем официальный образ Playwright для Java
+# Базовый образ с предустановленными Playwright, Java и системными зависимостями
 FROM mcr.microsoft.com/playwright/java:v1.50.0-jammy
-
-# Устанавливаем рабочую директорию
+# Задаем рабочую директорию внутри контейнера
 WORKDIR /app
-
-# Копируем только POM-файл сначала (для кеширования зависимостей)
+# Копируем только файл зависимостей для оптимизации кэширования
 COPY pom.xml .
+# Скачиваем зависимости Maven и кэшируем их (~/.m2/repository)
 RUN mvn dependency:go-offline
-
-# Копируем исходный код и тестовые файлы
+# Копируем исходный код
 COPY src ./src
-COPY test.txt /app/test.txt
-
-# Собираем проект (без запуска тестов)
+# Собираем проект
 RUN mvn clean package -DskipTests
+## Запускаем тесты
+CMD ["mvn", "test", "-Dtest=TodoApiDockerTest", "-Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG"]
