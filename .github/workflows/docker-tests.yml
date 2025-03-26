@@ -38,19 +38,20 @@ jobs:
       - name: Build Docker image
         run: docker build -t playwright-junit-test .
 
-      - name: Run tests with debug
+      - name: Run tests
         run: |
           docker run --rm \
-              --shm-size=2g \
-              -e BASE_URL=https://the-internet.herokuapp.com \
-              -v ${PWD}/test.txt:/app/test.txt \
-              playwright-junit-test \
-              mvn test -Dtest=FileUploadTest -e -X
+            --shm-size=2g \  # Увеличение shared memory
+            -e BASE_URL=https://the-internet.herokuapp.com \
+            -v ${PWD}/test.txt:/app/test.txt \
+            playwright-junit-test \
+            mvn test -Dtest=FileUploadTest -e -X
 
-      - name: Print test reports
-        if: ${{ failure() }}  # Только при ошибке
-        run: |
-          docker run --rm \
-              -v ${PWD}/test-reports:/app/target/surefire-reports \
-              playwright-junit-test \
-              cat /app/target/surefire-reports/*.txt
+      - name: Upload test reports
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: |
+            target/surefire-reports/*
+            target/allure-results/*
