@@ -82,13 +82,17 @@ public class AddRemoveElementsTest {
         return screenshotsDir.resolve(timestamp + "_" + filename);
     }
 
-    /** Пример тестового метода для демонстрации работы */
+    /**
+     * Пример тестового метода для демонстрации работы
+     */
     @Test
     void testOne() {
         System.out.println("Выполнение теста 1");
     }
 
-    /** Пример тестового метода для демонстрации работы */
+    /**
+     * Пример тестового метода для демонстрации работы
+     */
     @Test
     void testTwo() {
         System.out.println("Выполнение теста 2");
