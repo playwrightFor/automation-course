@@ -12,6 +12,9 @@ import java.nio.file.Paths;
 
 
 /**
+ * Тестовый класс для проверки динамической загрузки контента и взаимодействия с элементами страницы.
+ * Демонстрирует работу с ожиданием элементов, обработку вкладок и создание скриншотов при ошибках.
+ *
  * @author Oleg Todor
  * @since 2025-03-18
  */
@@ -22,6 +25,12 @@ public class DynamicContentTest {
     BrowserContext context;
     Page page;
 
+    /**
+     * Настройка тестового окружения перед каждым тестом:
+     * 1. Инициализация Playwright
+     * 2. Запуск браузера Chromium в режиме с графическим интерфейсом
+     * 3. Создание нового контекста и страницы
+     */
     @BeforeEach
     void setUp() {
         playwright = Playwright.create();
@@ -31,53 +40,55 @@ public class DynamicContentTest {
         page = context.newPage();
     }
 
-
+    /**
+     * Тест проверки динамической загрузки контента:
+     * - Переход на тестовую страницу
+     * - Взаимодействие с элементами интерфейса
+     * - Ожидание появления динамического контента
+     * - Проверка работы с несколькими вкладками
+     * - Создание скриншота при возникновении ошибки
+     */
     @Test
     void testDynamicLoading() {
         try {
-            // 1. Переход на страницу
             page.navigate("https://the-internet.herokuapp.com/dynamic_loading/1");
 
-            // 2. Ожидание и клик по кнопке Start
             Locator startButton = page.locator("button:has-text('Start')");
             startButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
             startButton.click();
 
-            // 3. Ожидание появления текста с увеличенным таймаутом
             Locator helloWorldText = page.locator("#finish >> text=Hello World!");
             helloWorldText.waitFor(new Locator.WaitForOptions().setTimeout(45000));
 
-            // 4. Проверка видимости ссылки
             Locator seleniumLink = page.locator("text=Elemental Selenium");
             seleniumLink.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-            Assertions.assertTrue(seleniumLink.isVisible(), "Ссылка не отображается");
+            Assertions.assertTrue(seleniumLink.isVisible(), "Ссылка на Elemental Selenium не отображается");
 
-            // 5. Открытие новой вкладки
-            Page newPage = context.waitForPage(() -> {
-                seleniumLink.click();
-            });
-
-            // 6. Ожидание полной загрузки новой страницы
+            Page newPage = context.waitForPage(() -> seleniumLink.click());
             newPage.waitForLoadState(LoadState.LOAD);
 
-            // 7. Проверка URL и контента
             Assertions.assertTrue(
-                    newPage.url().startsWith("https://elementalselenium.com/"), "Фактический URL: " + newPage.url()
+                    newPage.url().startsWith("https://elementalselenium.com/"),
+                    "Некорректный URL после перехода: " + newPage.url()
             );
-            Assertions.assertTrue(newPage.isVisible("h1 >> text='Elemental Selenium'"), "Заголовок не найден"
+            Assertions.assertTrue(
+                    newPage.isVisible("h1 >> text='Elemental Selenium'"),
+                    "Заголовок страницы не найден"
             );
 
-            // 8. Закрытие вкладки
             newPage.close();
 
         } catch (Exception e) {
-            // 9. Скриншот при ошибке
             page.screenshot(new Page.ScreenshotOptions()
                     .setPath(Paths.get("screenshots/dynamic-loading-error.png")));
             throw e;
         }
     }
 
+    /**
+     * Завершение работы тестового окружения:
+     * 1. Освобождение ресурсов Playwright
+     */
     @AfterEach
     void tearDown() {
         playwright.close();

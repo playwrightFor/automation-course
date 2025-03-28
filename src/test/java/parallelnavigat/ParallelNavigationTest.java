@@ -11,6 +11,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
+ * Тестовый класс для параллельной проверки навигации на различных страницах.
+ * Выполняет кросс-браузерное тестирование с использованием параметризованных тестов.
+ *
  * @author Oleg Todor
  * @since 2025-03-21
  */
@@ -18,6 +21,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ParallelNavigationTest {
     private static final String BASE_URL = "https://the-internet.herokuapp.com";
 
+    /**
+     * Параметризованный тест для проверки навигации:
+     * 1. Запускает указанный браузер (Chromium/Firefox)
+     * 2. Переходит на указанную страницу
+     * 3. Проверяет соответствие заголовка ожидаемому значению
+     *
+     * @param browserType тип браузера (chromium/firefox)
+     * @param path путь тестируемой страницы
+     */
     @ParameterizedTest
     @CsvSource({
             "chromium, /",
@@ -40,12 +52,10 @@ public class ParallelNavigationTest {
                 try (BrowserContext context = browser.newContext()) {
                     Page page = context.newPage();
 
-                    // Навигация с таймаутом 30 секунд
                     page.navigate(BASE_URL + path, new Page.NavigateOptions()
                             .setTimeout(30_000)
                             .setWaitUntil(WaitUntilState.LOAD));
 
-                    // Проверка заголовка
                     assertThat(page.title())
                             .as("Проверка пути: %s", path)
                             .isEqualTo(getExpectedTitle(path));
@@ -54,15 +64,17 @@ public class ParallelNavigationTest {
         }
     }
 
+    /**
+     * Возвращает ожидаемый заголовок страницы в зависимости от пути.
+     *
+     * @param path путь к странице
+     * @return ожидаемое значение заголовка
+     * @throws IllegalArgumentException при передаче неизвестного пути
+     */
     private String getExpectedTitle(String path) {
         return switch (path) {
-            case "/" -> "The Internet";
-            case "/login" -> "The Internet";
-            case "/dropdown" -> "The Internet";
-            case "/javascript_alerts" -> "The Internet";
-            case "/checkboxes" -> "The Internet";
+            case "/", "/login", "/dropdown", "/javascript_alerts", "/checkboxes", "/status_codes" -> "The Internet";
             case "/hover" -> "";
-            case "/status_codes" -> "The Internet";
             default -> throw new IllegalArgumentException("Unknown path: " + path);
         };
     }

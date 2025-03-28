@@ -12,6 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
+ * Тестовый класс для проверки обработки сетевых запросов и анализа содержимого страниц.
+ * Демонстрирует различные подходы к работе с обработчиками событий и проверке контента.
+ *
+ * @Execution(ExecutionMode.CONCURRENT) - позволяет параллельное выполнение тестов
  * @author Oleg Todor
  * @since 2025-03-21
  */
@@ -20,6 +24,11 @@ public class RequestHandlerTest {
     static Playwright playwright;
     static Browser browser;
 
+    /**
+     * Инициализация тестового окружения перед всеми тестами:
+     * 1. Создание экземпляра Playwright
+     * 2. Запуск браузера Chromium в headful-режиме
+     */
     @BeforeAll
     static void setUp() {
         playwright = Playwright.create();
@@ -28,56 +37,68 @@ public class RequestHandlerTest {
                         .setHeadless(false));
     }
 
+    /**
+     * Тест логирования сетевых запросов:
+     * 1. Создание контекста и страницы
+     * 2. Регистрация обработчика запросов
+     * 3. Выполнение навигации по страницам
+     * 4. Автоматическое закрытие ресурсов
+     */
     @Test
     void testRequestLogging() {
-        try (BrowserContext context = browser.newContext(); Page page = context.newPage()) {
-            Consumer<Request> requestListener = request -> System.out.println("Request: " + request.url());
-            page.onRequest(requestListener); // Добавляем обработчик для каждого теста
+        try (BrowserContext context = browser.newContext();
+             Page page = context.newPage()) {
 
-            // Выполняем действия
+            Consumer<Request> requestListener = request ->
+                    System.out.println("Зарегистрирован запрос: " + request.url());
+
+            page.onRequest(requestListener);
+
             page.navigate("https://the-internet.herokuapp.com/");
             page.click("a[href='/add_remove_elements/']");
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
+    /**
+     * Тест проверки содержимого страницы:
+     * 1. Проверка заголовка страницы
+     * 2. Анализ HTML-контента
+     * 3. Проверка текста элементов
+     * 4. Верификация состояния загрузки
+     */
     @Test
-    void testWithoutCleanup() {
-        try (BrowserContext context = browser.newContext(); Page page = context.newPage()) {
-            Consumer<Request> requestListener = request -> System.out.println("Request: " + request.url());
-            page.onRequest(requestListener); // Добавляем обработчик для каждого теста
+    void testPageContentVerification() {
+        try (BrowserContext context = browser.newContext();
+             Page page = context.newPage()) {
 
-            // Переход на страницу с постами
+            page.onRequest(request ->
+                    System.out.println("Обработан запрос: " + request.url()));
+
             page.navigate("https://the-internet.herokuapp.com/");
-
-            // Ожидание полной загрузки страницы
             page.waitForLoadState(LoadState.DOMCONTENTLOADED);
 
-            // Получение заголовка страницы
             String title = page.title();
-            System.out.println("Фактический заголовок страницы: " + title);
+            assertTrue(title.contains("The Internet"),
+                    "Фактический заголовок: " + title);
 
-            // Проверка, что заголовок содержит 'Welcome'
-            assertTrue(title.contains("The Internet"), "Заголовок страницы не содержит 'Welcome'!");
+            String headerText = page.locator("h1.heading").innerText();
+            assertTrue(headerText.contains("Welcome to the-internet"),
+                    "Текст заголовка: " + headerText);
 
-            // Проверка содержимого страницы
-            String content = page.content();
-            System.out.println("Содержимое страницы: " + content);
-
-            // Проверка наличия элемента <h1> или другого заголовка
-            String headerText = page.locator("h1").innerText();
-            System.out.println("Текст заголовка: " + headerText);
-            assertTrue(headerText.contains("Welcome"), "Текст заголовка не содержит 'Welcome'!");
-        } catch (Exception e) {
-            e.printStackTrace();
+            Locator examplesSection = page.locator("div#content ul");
+            assertTrue(examplesSection.isVisible(),
+                    "Секция примеров не отображается");
         }
     }
 
+    /**
+     * Завершение работы тестового окружения:
+     * 1. Закрытие браузера
+     * 2. Освобождение ресурсов Playwright
+     */
     @AfterAll
     static void cleanUp() {
         browser.close();
         playwright.close();
     }
 }
-

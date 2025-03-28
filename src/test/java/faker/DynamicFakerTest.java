@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
+ * Тестовый класс для проверки отображения динамического контента с использованием мок-данных.
+ * Интегрирует библиотеку Faker для генерации тестовых данных и Playwright для мокирования API.
+ *
  * @author Oleg Todor
  * @since 2025-03-23
  */
@@ -18,20 +21,22 @@ public class DynamicFakerTest {
     Faker faker;
     String mockName;
 
+    /**
+     * Подготовка тестового окружения:
+     * 1. Инициализация генератора тестовых данных Faker
+     * 2. Настройка браузера Chromium
+     * 3. Конфигурация мокированного ответа для эндпоинта /dynamic_content
+     */
     @BeforeEach
     void setUp() {
-        // 1. Инициализация Faker
         faker = new Faker();
         mockName = faker.name().fullName();
 
-        // 2. Настройка Playwright
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
         page = browser.newPage();
 
-        // 3. Мокирование API
         page.route("**/dynamic_content", route -> {
-            // 4. Формирование мок-ответа
             String mockResponse = "<html><body>" +
                     "<div class='row'>" +
                     "  <div class='large-2 columns'>" +
@@ -47,23 +52,32 @@ public class DynamicFakerTest {
         });
     }
 
+    /**
+     * Тест проверки отображения сгенерированных данных:
+     * 1. Переход на тестовую страницу
+     * 2. Ожидание появления элемента с мок-данными
+     * 3. Проверка видимости и соответствия текста
+     */
     @Test
     void testDynamicContentWithMock() {
-        // 5. Навигация на страницу
         page.navigate("https://the-internet.herokuapp.com/dynamic_content");
 
-        // 6. Поиск и проверка элемента
         Locator content = page.locator(".large-10.columns:has-text('" + mockName + "')");
         content.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
 
-        // 7. Проверка отображения имени
-        assertTrue(content.isVisible(), "Имя не отображается на странице");
-        assertEquals(mockName, content.textContent().trim(), "Текст не совпадает с мок-данными");
+        assertTrue(content.isVisible(), "Сгенерированное имя не отображается");
+        assertEquals(mockName, content.textContent().trim(),
+                "Отображаемый текст не совпадает с сгенерированными данными");
     }
 
+    /**
+     * Завершение работы тестового окружения:
+     * 1. Закрытие страницы
+     * 2. Остановка браузера
+     * 3. Освобождение ресурсов Playwright
+     */
     @AfterEach
     void tearDown() {
-        // 8. Закрытие ресурсов
         page.close();
         browser.close();
         playwright.close();

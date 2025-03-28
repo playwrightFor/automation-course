@@ -19,6 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
+ * Тестовый класс для проверки работы с JavaScript-алертами с расширенной отчетностью.
+ * Интегрирует фреймворки ExtentReports и Allure для формирования детальных отчетов.
+ *
+ * @Epic Тесты для the-internet.herokuapp.com
+ * @Feature Работа с JavaScript-алертами
  * @author Oleg Todor
  * @since 2025-03-21
  */
@@ -29,6 +34,11 @@ public class AdvancedReportingTest {
     private ExtentTest extentTest;
     private Page page;
 
+    /**
+     * Инициализация системы отчетности перед всеми тестами:
+     * 1. Создает HTML-репортер для ExtentReports
+     * 2. Настраивает сохранение отчетов в target/extent-report.html
+     */
     @BeforeAll
     static void setupExtent() {
         ExtentSparkReporter reporter = new ExtentSparkReporter("target/extent-report.html");
@@ -36,6 +46,17 @@ public class AdvancedReportingTest {
         extent.attachReporter(reporter);
     }
 
+    /**
+     * Тест взаимодействия с JavaScript-алертами:
+     * 1. Запускает браузер и открывает тестовую страницу
+     * 2. Обрабатывает диалоговые окна
+     * 3. Выполняет проверки текста алертов
+     * 4. Сохраняет скриншоты для отчетов
+     *
+     * @Story Проверка алертов
+     * @Description Тест взаимодействия с JS-алертами
+     * @Severity Уровень важности: NORMAL
+     */
     @Test
     @Story("Проверка алертов")
     @Description("Тест взаимодействия с JS-алертами")
@@ -55,20 +76,16 @@ public class AdvancedReportingTest {
                 extentTest.pass("Страница загружена");
             });
 
-            // Переменная для хранения текста алерта
             final String[] alertText = new String[1];
-
             page.onDialog(dialog -> {
-                alertText[0] = dialog.message(); // Сохраняем текст алерта
+                alertText[0] = dialog.message();
                 dialog.accept();
             });
 
-            // Клик на кнопку, которая вызывает алерт
             Allure.step("Кликнуть на кнопку Alert", () -> {
                 page.click("button[onclick='jsAlert()']");
                 extentTest.pass("Кнопка Alert нажата");
             });
-
 
             page.waitForTimeout(500);
 
@@ -77,7 +94,6 @@ public class AdvancedReportingTest {
                 extentTest.pass("Текст алерта корректен: " + alertText[0]);
             });
 
-            // Скриншот при успешном выполнении - указвам папку
             String screenshotPath = "screenshots/alert-success.png";
             page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(screenshotPath)));
             extentTest.addScreenCaptureFromPath(screenshotPath);
@@ -93,6 +109,10 @@ public class AdvancedReportingTest {
         }
     }
 
+    /**
+     * Финализация отчетности после всех тестов:
+     * Сохраняет собранные данные в HTML-отчет
+     */
     @AfterAll
     static void tearDown() {
         extent.flush();

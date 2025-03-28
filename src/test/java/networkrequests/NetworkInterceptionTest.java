@@ -11,6 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
+ * Тестовый класс для проверки перехвата сетевых запросов и модификации ответов.
+ * Демонстрирует использование функционала маршрутизации Playwright для подмены контента.
+ *
  * @author Oleg Todor
  * @since 2025-03-18
  */
@@ -20,6 +23,14 @@ public class NetworkInterceptionTest {
     BrowserContext context;
     Page page;
 
+    /**
+     * Настройка тестового окружения перед каждым тестом:
+     * 1. Инициализация Playwright и браузера Chromium
+     * 2. Создание нового контекста и страницы
+     * 3. Регистрация обработчика для перехвата запросов
+     *    - Подмена ответа для URL /dynamic_loading/2
+     *    - Возвращение кастомного HTML-контента
+     */
     @BeforeEach
     void setUp() {
         playwright = Playwright.create();
@@ -27,24 +38,28 @@ public class NetworkInterceptionTest {
         context = browser.newContext();
         page = context.newPage();
 
-        // Перехват запроса и подмена ответа
         context.route("**/dynamic_loading/2", route -> {
             route.fulfill(new Route.FulfillOptions()
                     .setStatus(200)
                     .setHeaders(Collections.singletonMap("Content-Type", "text/html"))
                     .setBody("""
-                                <div id="start">
-                                    <button>Start</button>
-                                </div>
-                                <div id="finish" style="display: block;">
-                                    <h4>Mocked Title</h4>
-                                </div>
+                            <div id="start">
+                                <button>Start</button>
+                            </div>
+                            <div id="finish" style="display: block;">
+                                <h4>Mocked Title</h4>
+                            </div>
                             """)
             );
         });
     }
 
-
+    /**
+     * Тест проверки подмены контента:
+     * 1. Переход на тестовую страницу
+     * 2. Клик по кнопке "Start"
+     * 3. Верификация отображения мокового заголовка
+     */
     @Test
     void testMockedContent() {
         page.navigate("https://the-internet.herokuapp.com/dynamic_loading/2");
@@ -54,7 +69,11 @@ public class NetworkInterceptionTest {
         assertEquals("Mocked Title", title.textContent());
     }
 
-
+    /**
+     * Завершение работы тестового окружения:
+     * 1. Закрытие браузера
+     * 2. Освобождение ресурсов Playwright
+     */
     @AfterEach
     void tearDown() {
         browser.close();

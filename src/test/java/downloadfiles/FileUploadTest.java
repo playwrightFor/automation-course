@@ -17,6 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
+ * Тестовый класс для проверки функционала загрузки и скачивания файлов.
+ * Использует Playwright для автоматизации браузера и API-запросов.
+ *
  * @author Oleg Todor
  * @since 2025-03-22
  */
@@ -27,6 +30,13 @@ public class FileUploadTest {
     Path testFile;
     APIRequestContext request;
 
+    /**
+     * Настройка тестового окружения перед каждым тестом:
+     * 1. Инициализация Playwright
+     * 2. Создание временного тестового PNG-файла
+     * 3. Запуск браузера Chromium с графическим интерфейсом
+     * 4. Создание контекста для API-запросов
+     */
     @BeforeEach
     void setUp() {
         playwright = Playwright.create();
@@ -36,6 +46,10 @@ public class FileUploadTest {
         request = playwright.request().newContext();
     }
 
+    /**
+     * Генерирует временный PNG-файл с минимально валидной структурой
+     * @return Path созданного файла
+     */
     private Path createTestFile() {
         try {
             Path path = Files.createTempFile("image", ".png");
@@ -48,13 +62,20 @@ public class FileUploadTest {
             Files.write(path, pngData);
             return path;
         } catch (Exception e) {
-            throw new RuntimeException("Error creating test file", e);
+            throw new RuntimeException("Ошибка создания тестового файла", e);
         }
     }
 
+    /**
+     * Тест проверки загрузки и скачивания файла:
+     * 1. Отправка файла через API
+     * 2. Проверка корректности ответа
+     * 3. Верификация содержимого файла
+     * 4. Проверка скачивания PNG через API
+     * 5. Валидация MIME-типа и сигнатуры файла
+     */
     @Test
     void testFileUploadAndDownload() throws IOException {
-        // 1. Загрузка файла и проверка содержимого
         APIResponse uploadResponse = request.post(
                 "https://httpbin.org/post",
                 RequestOptions.create()
@@ -65,32 +86,33 @@ public class FileUploadTest {
         );
 
         String responseBody = uploadResponse.text();
-
-        // 2. Проверка, что файл был получен сервером
         assertTrue(responseBody.contains("data:image/png;base64"),
-                "Файл не был корректно загружен");
+                "Отсутствует base64-представление файла в ответе");
 
-        // 3. Декодируем и проверяем содержимое
         String base64Data = responseBody.split("\"file\": \"")[1].split("\"")[0];
         byte[] receivedBytes = Base64.getDecoder().decode(base64Data.split(",")[1]);
         assertArrayEquals(Files.readAllBytes(testFile), receivedBytes,
-                "Содержимое файла не совпадает");
+                "Загруженные данные не совпадают с исходным файлом");
 
-        // 4. Проверка скачивания PNG
         APIResponse downloadResponse = request.get("https://httpbin.org/image/png");
+        assertEquals("image/png", downloadResponse.headers().get("content-type"),
+                "Неверный MIME-тип скачанного файла");
 
-        // 5. Проверка MIME-типа
-        assertEquals("image/png", downloadResponse.headers().get("content-type"));
-
-        // 6. Проверка сигнатуры PNG
         byte[] pngBytes = downloadResponse.body();
-        assertTrue(pngBytes.length >= 8);
-        assertEquals(0x89, pngBytes[0] & 0xFF);
-        assertEquals(0x50, pngBytes[1] & 0xFF);
-        assertEquals(0x4E, pngBytes[2] & 0xFF);
-        assertEquals(0x47, pngBytes[3] & 0xFF);
+        assertTrue(pngBytes.length >= 8, "Некорректный размер файла");
+        assertEquals(0x89, pngBytes[0] & 0xFF, "Неверная сигнатура PNG");
+        assertEquals(0x50, pngBytes[1] & 0xFF, "Неверная сигнатура PNG");
+        assertEquals(0x4E, pngBytes[2] & 0xFF, "Неверная сигнатура PNG");
+        assertEquals(0x47, pngBytes[3] & 0xFF, "Неверная сигнатура PNG");
     }
 
+    /**
+     * Очистка тестового окружения:
+     * 1. Удаление временного файла
+     * 2. Закрытие API-контекста
+     * 3. Закрытие страницы и браузера
+     * 4. Освобождение ресурсов Playwright
+     */
     @AfterEach
     void tearDown() {
         try {

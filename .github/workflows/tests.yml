@@ -33,6 +33,7 @@
 #          export DISPLAY=:0
 #          Xvfb :0 -screen 0 1280x720x24 >/dev/null 2>&1 &
 #          mvn clean test -B
+#
 
 name: Java Tests
 
@@ -67,9 +68,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb libgbm-dev x11-xkb-utils
 
-      # Запуск всех тестов, кроме FileUploadTest
+      # Запуск всех тестов, кроме TodoApiDockerTest
       - name: Run tests
         run: |
           export DISPLAY=:0
           Xvfb :0 -screen 0 1280x720x24 >/dev/null 2>&1 &
-          mvn clean test -B -Dtest=!FileUploadTest  # Исключаем тест из Docker
+          mvn clean test -B -Dtest=!TodoApiDockerTest  # Исключаем тест из Docker

@@ -5,6 +5,8 @@ import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
 
 /**
+ * Базовый класс!
+ *
  * @author Oleg Todor
  * @since 2025-03-23
  */
@@ -15,7 +17,6 @@ public abstract class BasePage {
         this.page = page;
     }
 
-    // Метод для навигации на заданный URL
     public void navigateTo(String url) {
         page.navigate(url);
         page.waitForLoadState(DOMCONTENTLOADED);

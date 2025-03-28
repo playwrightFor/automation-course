@@ -7,14 +7,22 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
+ * Тестовый класс для проверки работы REST API сервиса.
+ * Осуществляет проверку корректности структуры и данных JSON-ответа.
+ *
  * @author Oleg Todor
  * @since 2025-03-22
  */
 public class TodoApiTest {
-    Playwright playwright;
-    APIRequestContext requestContext;
-    ObjectMapper objectMapper = new ObjectMapper();
+    private Playwright playwright;
+    private APIRequestContext requestContext;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Инициализация тестового окружения перед каждым тестом:
+     * 1. Создание экземпляра Playwright
+     * 2. Настройка контекста API-запросов с базовым URL
+     */
     @BeforeEach
     void setUp() {
         playwright = Playwright.create();
@@ -24,29 +32,42 @@ public class TodoApiTest {
         );
     }
 
+    /**
+     * Тест проверки конечной точки /todos:
+     * 1. Выполнение GET-запроса для получения элемента
+     * 2. Проверка кода статуса HTTP-ответа
+     * 3. Валидация структуры и содержимого JSON
+     *
+     * @throws Exception при ошибках парсинга JSON
+     */
     @Test
     void testTodoApi() throws Exception {
-        // 1. Выполнение GET-запроса напрямую через API
         APIResponse response = requestContext.get("/todos/1");
 
-        // 2. Проверка статуса
-        assertEquals(200, response.status());
+        assertEquals(200, response.status(), "Неверный статус код ответа");
 
-        // 3. Парсинг JSON
         JsonNode json = objectMapper.readTree(response.text());
 
-        // 4. Проверка структуры
-        assertAll("JSON Validation",
-                () -> assertEquals(1, json.get("id").asInt()),
-                () -> assertEquals(1, json.get("userId").asInt()),
-                () -> assertEquals("delectus aut autem", json.get("title").asText()),
-                () -> assertFalse(json.get("completed").asBoolean())
+        assertAll("Проверка структуры ответа",
+                () -> assertEquals(1, json.get("id").asInt(), "Неверный ID элемента"),
+                () -> assertEquals(1, json.get("userId").asInt(), "Неверный ID пользователя"),
+                () -> assertEquals("delectus aut autem", json.get("title").asText(), "Неверный заголовок"),
+                () -> assertFalse(json.get("completed").asBoolean(), "Некорректный статус выполнения")
         );
     }
 
+    /**
+     * Освобождение ресурсов после выполнения теста:
+     * 1. Закрытие контекста API-запросов
+     * 2. Завершение работы Playwright
+     */
     @AfterEach
     void tearDown() {
-        requestContext.dispose();
-        playwright.close();
+        if (requestContext != null) {
+            requestContext.dispose();
+        }
+        if (playwright != null) {
+            playwright.close();
+        }
     }
 }

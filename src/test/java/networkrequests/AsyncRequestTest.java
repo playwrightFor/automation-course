@@ -10,6 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
+ * Тестовый класс для проверки обработки асинхронных запросов и динамической загрузки контента.
+ * Демонстрирует использование обработчиков сетевых запросов и ожидания элементов.
+ *
  * @author Oleg Todor
  * @since 2025-03-18
  */
@@ -19,6 +22,12 @@ public class AsyncRequestTest {
     BrowserContext context;
     Page page;
 
+    /**
+     * Настройка тестового окружения перед каждым тестом:
+     * 1. Инициализация Playwright
+     * 2. Запуск браузера Chromium в режиме с графическим интерфейсом
+     * 3. Создание нового контекста и страницы
+     */
     @BeforeEach
     void setUp() {
         playwright = Playwright.create();
@@ -29,31 +38,38 @@ public class AsyncRequestTest {
         page = context.newPage();
     }
 
-
+    /**
+     * Тест проверки асинхронной загрузки контента:
+     * 1. Переход на тестовую страницу
+     * 2. Регистрация обработчика сетевых запросов
+     * 3. Запуск процесса загрузки
+     * 4. Ожидание и верификация результатов
+     */
     @Test
     void testAsyncRequest() {
-        // Переходим на страницу с примером асинхронной загрузки
         page.navigate("https://the-internet.herokuapp.com/dynamic_loading/2");
 
-        // Создаем хук для перехвата сетевых запросов
         page.onRequest(request -> {
             if (request.url().contains("dynamic_loading/2")) {
                 System.out.println("Запрос к: " + request.url());
             }
         });
 
-        // Нажимаем кнопку Start
         page.click("button:has-text('Start')");
 
-        // Ожидаем появления текста после загрузки
         Locator helloText = page.locator("#finish >> text=Hello World!");
         helloText.waitFor(new Locator.WaitForOptions().setTimeout(10000));
 
-        // Проверяем результат
-        assertTrue(helloText.isVisible(), "Текст не отображается");
-        assertEquals("Hello World!", helloText.textContent());
+        assertTrue(helloText.isVisible(), "Текст не отображается после загрузки");
+        assertEquals("Hello World!", helloText.textContent(),
+                "Содержимое элемента не соответствует ожидаемому");
     }
 
+    /**
+     * Завершение работы тестового окружения:
+     * 1. Закрытие контекста браузера
+     * 2. Освобождение ресурсов Playwright
+     */
     @AfterEach
     void tearDown() {
         context.close();
